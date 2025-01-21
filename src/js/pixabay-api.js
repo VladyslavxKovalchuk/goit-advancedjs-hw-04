@@ -14,10 +14,11 @@ export async function getPhotos(query, page, perpage) {
     page,
     per_page: perpage,
   });
-  return await axios
-    .get('https://pixabay.com/api/', {
-      params: params,
-    });
+  const response = await axios
+  .get('https://pixabay.com/api/', {
+    params: params,
+  });
+  return response.data;
 }
 
 // export async function getPhotos(query, page, perpage) {

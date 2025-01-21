@@ -61,16 +61,25 @@ searchForm.addEventListener('submit', async e => {
   gallery.innerHTML = '';
   changeVisibility(loader, true);
   changeVisibility(loadMore, false);
-  await getPhotos(
+  const photos =  await getPhotos(
     queryParams.searchQuery,
     queryParams.page,
     queryParams.perPage
-  ).then(result => {
+  ).catch(error => {
+    iziToast.error({
+      message: 'There are some errors with loading pictures.',
+      position: 'topRight',
+    });
+    console.error(error);
+  });
+  
+  if (photos)
+  {
       changeVisibility(loader, false);
-      if (result.hits.length) {
-        gallery.innerHTML = createGallery(result.hits);
+      if (photos.hits.length) {
+        gallery.innerHTML = createGallery(photos.hits);
         simpleLightBox.refresh();
-        if (result.totalHits > queryParams.perPage)
+        if (photos.totalHits > queryParams.perPage)
           changeVisibility(loadMore, true);
       } else {
         iziToast.warning({
@@ -79,14 +88,8 @@ searchForm.addEventListener('submit', async e => {
           position: 'topRight',
         });
       }
-    })
-    .catch(error => {
-      iziToast.error({
-        message: 'There are some errors with loading pictures.',
-        position: 'topRight',
-      });
-      console.error(error);
-    });
+    }
+  
 });
 
 function smoothScroll() {
